@@ -6,7 +6,7 @@
 #include <string.h>
 
 #define DATA_SIZE 256
-#define N_STATE 2
+#define N_STATE 4
 char basedir[DATA_SIZE];
 char *basedir_end = NULL;
 char content[DATA_SIZE];
@@ -27,11 +27,11 @@ int current_state = 0;
 int rotation_changed(){
 	int state = 0;
 
-	if(accel_y < -accel_g) state = 0;
-	else if(accel_y > accel_g) state = 1;
+	if(accel_y < -accel_g) state = 3;
+	else if(accel_y > accel_g) state = 2;
 #if N_STATE == 4
-	else if(accel_x > accel_g) state = 2;
-	else if(accel_x < -accel_g) state = 3;
+	else if(accel_x > accel_g) state = 1;
+	else if(accel_x < -accel_g) state = 0;
 #endif
 
 	if(current_state!=state){
@@ -58,7 +58,7 @@ FILE* bdopen(char const *fname, char leave_open){
 void rotate_screen(){
 	sprintf(command, "xrandr -o %s", ROT[current_state]);
 	system(command);
-	sprintf(command, "xinput set-prop \"%s\" \"Coordinate Transformation Matrix\" %s", "Wacom HID 4846 Finger", COOR[current_state]);
+	sprintf(command, "xinput set-prop \"%s\" \"Coordinate Transformation Matrix\" %s", "pointer:Goodix Capacitive TouchScreen", COOR[current_state]);
 	system(command);
 }
 
